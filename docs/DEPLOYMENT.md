@@ -1,5 +1,13 @@
 # Cloudflare Pages deployment
 
+## Current deployment
+
+The project `dmci-explorer` is deployed at https://dmci-explorer.pages.dev/ using **Direct Upload**. The source repository is https://github.com/whitequill-software/dmci-explorer. No custom domain was attached, and DNS was not changed. No paid resources were selected.
+
+For updates, run `npm ci`, `npm test`, and `npm run build`; upload a ZIP of the contents of `dist` using **Create a new deployment** in the existing project, or use authenticated Wrangler. GitHub pushes alone do not update this deployment.
+
+Cloudflare does not allow an existing Direct Upload project to switch to Git integration. To use native automatic GitHub builds later, create a separate Git-connected Pages project and verify it before any domain migration. An alternative is a GitHub Actions upload workflow with a narrowly scoped Cloudflare credential stored as a repository secret; none is configured now. See the [official Direct Upload guide](https://developers.cloudflare.com/pages/get-started/direct-upload/).
+
 ## Preferred: connect GitHub
 
 1. Sign in to Cloudflare and choose **Workers & Pages → Create application → Pages → Connect to Git** (dashboard labels can vary).

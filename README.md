@@ -2,6 +2,12 @@
 
 An independently owned, responsive React + Vite + Tailwind CSS website for **DMCI Explorer — DMCI Homes for Families**. No Base44 SDK, account, backend, or subscription is required.
 
+Live preview: https://dmci-explorer.pages.dev/
+
+Source: https://github.com/whitequill-software/dmci-explorer
+
+The preview is hosted as a Cloudflare Pages Direct Upload project. GitHub automatic deployment is not enabled. Updates require a fresh build and direct upload (or authenticated Wrangler deployment). The custom domain and DNS remain unchanged.
+
 ## Migration status
 
 The reference at https://dmci-nest-guide.base44.app displayed **“DMCI Explorer isn't available yet”** on 14 October 2026. Its original pages, design, assets, mascot, and backend features could not be inspected. This is a **provisional implementation based on the supplied brand brief**, not a verified recreation. The explorer, neighborhood, and conceptual floor plans are original SVG artwork. Replace them with authorized original assets when available. See [inspection report](docs/INSPECTION.md) and [feature status](docs/FEATURES.md).
@@ -22,6 +28,8 @@ npm test
 npm run build
 npm run preview
 ```
+
+Use `npm run format` to format the source before committing. The Vite configuration preserves symlink paths to support the local Windows sandbox without changing the production output.
 
 ## Structure
 
