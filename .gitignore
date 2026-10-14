@@ -1,8 +1,9 @@
 node_modules/
 dist/
-.env
-.env.*
+.env*
 !.env.example
+.openai/*.local.*
+
 .wrangler/
-*.log
-.DS_Store
+.openai/
+VERIFICATION.md

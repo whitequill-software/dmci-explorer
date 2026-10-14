@@ -1,77 +1,52 @@
 # DMCI Explorer
 
-An independently owned, responsive React + Vite + Tailwind CSS website for **DMCI Explorer — DMCI Homes for Families**. No Base44 SDK, account, backend, or subscription is required.
+React, Vite and Tailwind CSS recreation of the eight screenshots in `dmci explorer.pptx`.
 
-Live preview: https://dmci-explorer.pages.dev/
+## Run
 
-Source: https://github.com/whitequill-software/dmci-explorer
-
-The preview is hosted as a Cloudflare Pages Direct Upload project. GitHub automatic deployment is not enabled. Updates require a fresh build and direct upload (or authenticated Wrangler deployment). The custom domain and DNS remain unchanged.
-
-## Migration status
-
-The reference at https://dmci-nest-guide.base44.app displayed **“DMCI Explorer isn't available yet”** on 14 October 2026. Its original pages, design, assets, mascot, and backend features could not be inspected. This is a **provisional implementation based on the supplied brand brief**, not a verified recreation. The explorer, neighborhood, and conceptual floor plans are original SVG artwork. Replace them with authorized original assets when available. See [inspection report](docs/INSPECTION.md) and [feature status](docs/FEATURES.md).
-
-## Local setup
-
-Install Node.js 22.12 or newer (Node 24 works), then:
+Node.js 20.19+ or 22.12+.
 
 ```sh
 npm ci
 npm run dev
-```
-
-Open the local URL printed by Vite. To check the production build:
-
-```sh
 npm test
 npm run build
-npm run preview
 ```
 
-Use `npm run format` to format the source before committing. The Vite configuration preserves symlink paths to support the local Windows sandbox without changing the production output.
+## Cloudflare Pages through GitHub
 
-## Structure
+1. Create a GitHub repository and push this project folder, including `package-lock.json`. Do not commit `node_modules`, `dist`, credentials, or `.env` files.
+2. In Cloudflare Pages, connect that repository. Framework preset: Vite. Build command: `npm run build`. Output directory: `dist`. Set `NODE_VERSION` to `22`.
+3. Use the assigned Pages preview domain first. A live domain has not been modified by this work. Configure a custom domain only with owner authorization.
 
-```text
-src/
-  App.jsx                      Page sections, navigation, filters, FAQ, planner
-  main.jsx                     React entry point
-  styles.css                   Responsive design and Tailwind import
-  planner.js                   Portable home brief export
-  components/Illustrations.jsx Original SVG mascot and illustrations
-  data/content.js              Editable home guides and FAQ content
-public/
-  favicon.svg                  Original compass mark
-  _headers                     Cloudflare security and cache headers
-  robots.txt                   Crawler policy
-docs/                          Inspection, deployment, feature status
-tests/                         Brief export checks
-```
+All assets and fonts are local. Hash navigation and article preview routes work on static hosting. `_headers` and `_redirects` are supplied. `.openai/hosting.json` is Sites hosting metadata; Cloudflare Pages does not require it.
 
-## Deploy
+## What works
 
-Cloudflare Pages configuration: framework **React (Vite)**, build command **npm run build**, output directory **dist**, production branch **main**. Use Node 24. See [deployment guide](docs/DEPLOYMENT.md). Only publish the generated `dist` files for direct upload; never upload `node_modules`, credentials, or your entire workspace. GitHub-connected deployment is preferred for automatic updates.
+- Responsive eight-section homepage, original supplied hero artwork and explorer mascot, sticky navigation and mobile menu.
+- Location and bedroom filter controls. The five owner-requested projects are shown. Bedroom selections show an explicit unverified-inventory state because no bedroom inventory was supplied.
+- Project detail dialogs, inquiry preselection, journal index, deep-linked article previews, keyboard-accessible dialogs and native focus trapping.
+- Inquiry validation (name, 10–15-digit telephone, optional email format, consent). **No data is transmitted or persisted. The button says Validate Inquiry.** Valid input produces a clear “NOT sent or saved” status.
 
-## Maintenance
+## Required before public launch
 
-1. Create a branch before larger edits; update copy in `src/data/content.js` and sections in `src/App.jsx`.
-2. Run tests, build, and review desktop and narrow mobile layouts, menu, filters, FAQ, and downloaded brief.
-3. Commit and push to GitHub. With Cloudflare Git integration, review the preview deployment before merging to `main`.
-4. Update packages intentionally and commit `package-lock.json`. Run `npm audit` and review each proposed upgrade before applying it.
-5. Keep original licensed artwork and property data provenance documented. Never present illustrative plans as actual layouts.
-6. For rollback, redeploy a previous successful deployment in Cloudflare Pages or revert the relevant commit.
+- Verify all five requested projects, their locations and descriptions. One Delta Terraces and The Cameron have no supplied location or specifications. No official inventory feed, prices, dates, unit specifications or available bedroom configurations were supplied.
+- Supply original property photos, journal photos, full articles, original logo files, high-resolution hero artwork, floor plans, dimensions and 3D assets. The hero is cropped from slide 1; other screenshot placeholders are intentionally retained. No unrelated stock images or invented projects were added.
+- Confirm brand usage permission, independent-marketer affiliation, interior styling eligibility and service terms. Reference claims are not independently verified.
+- Provide verified phone, email, business address and approved privacy/service policies. The owner supplied https://www.facebook.com/dmciexplorer; Facebook links use this page and chat links use https://m.me/dmciexplorer. Confirm Messenger is enabled on the page. Placeholder phone/email from the deck are not actionable contacts.
+- Connect inquiry delivery using a Cloudflare Pages Function/Worker or another approved server. Validate server-side, verify consent, apply rate limiting/spam protection, configure secrets, a real recipient or CRM, retention controls and error handling. Only after successful delivery/storage should the UI offer Send Inquiry and show a receipt. Do not expose API secrets in client code or enable a simulated success message.
+- Viewing scheduling, CRM, email notifications, floor-plan gallery, layout viewer, comparison engine and 3D tours require integrations/content. These are explicitly marked as previews or pending.
 
-## Privacy and credentials
+No subscriptions purchased. No user live domain changed. Source repository: https://github.com/whitequill-software/dmci-explorer. Cloudflare preview: https://dmci-explorer.pages.dev/. The existing Cloudflare project uses Direct Upload; GitHub pushes do not trigger deployment.
 
-No visitor analytics, storage cookies, lead submission, or external services are configured. The planner uses React state in memory and creates a local text download. It does **not** save or send inquiries. No contact destination was supplied, so no email, phone number, Messenger account, or fake success state has been invented. Hosting access logs remain subject to Cloudflare's policies.
+## Instant preview
 
-Never place API keys in React code or `VITE_*` variables: those values are public in the browser. Future integrations requiring secrets must use server-side functions and environment secrets. `.env*`, `.wrangler/`, dependency folders, and build output are ignored by Git.
+Open `DMCI-Explorer-Preview.html` supplied beside the source ZIP in Chrome or Edge. Everything needed to render it is embedded; only Facebook/Messenger navigation needs an internet connection. If an older preview is already open, close it and open the updated file. The preview includes hover effects; system reduced-motion settings intentionally suppress movement.
 
-## Future expansion
+To regenerate the single-file preview after changing the source, run `npm run build`, then `python scripts/export-preview.py`.
 
-Keep verified listings in a dedicated data module or CMS adapter; add routing for project detail pages. Use lazy-loaded model viewers for licensed GLB assets. Put pricing rules in a versioned pure computation module. Add authenticated server-side endpoints for CRM delivery, rate limiting, spam protection, explicit privacy consent, and verified delivery before activating inquiries. AI and Messenger services require their own account configuration and privacy review. Interior styling eligibility and terms must be approved before publication.
+## This revision
 
-## Costs and ownership
+All five requested projects; reusable Header, PropertyCard, ArticleCard and visual components; responsive navigation with current-section indicators; original mascot image without mobile cropping; restrained card lifts, icon motion, button feedback and entry animation; reduced-motion support; public Facebook/Messenger configuration; a privacy/integration notice above the inquiry fields. Future tool cards are individually labeled as previews. Fonts are limited to the required Latin subset to reduce download size.
 
-This source has no subscription requirement. The initial static website is intended for Cloudflare Pages' free plan, subject to its current limits. No paid resources, Base44 purchases, or domain/DNS changes are authorized or needed for the preview deployment. Domain registration renewal is separate from hosting. Future AI, CRM, email delivery, media storage, and 3D assets may add costs; review alternatives before enabling them.
+See INTEGRATIONS.md for the future server boundary and LAUNCH-CHECKLIST.md for the remaining owner-provided information. The existing Cloudflare Pages Direct Upload project is used for this release. Future releases require building and uploading `dist` again. To enable native Git-triggered builds, create a separate Git-connected Pages project; never change the custom domain without owner approval.

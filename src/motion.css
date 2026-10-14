@@ -1,0 +1,54 @@
+/* Transform-only feedback; no hidden content or dependency on animation scripts. */
+.card,.hero-image,.icon-tile,.brand-icon,.socials a,.socials button{
+ transition:transform 240ms cubic-bezier(.2,.75,.3,1),box-shadow 240ms ease,border-color 240ms ease,background-color 240ms ease;
+}
+.button{transition:transform 200ms ease,box-shadow 200ms ease,background-color 200ms ease,filter 200ms ease}
+.button svg,.text-link svg{transition:transform 200ms ease}
+.header-inner nav a{position:relative;padding-block:7px}
+.header-inner nav a::after{content:'';position:absolute;left:0;right:0;bottom:1px;height:2px;border-radius:3px;background:var(--blue);transform:scaleX(0);transform-origin:left;transition:transform 200ms ease}
+.header-inner nav a[aria-current=location]::after{transform:scaleX(1)}
+.header-inner nav a[aria-current=location]{color:var(--blue)}
+.property-card,.article-card{display:flex;flex-direction:column}
+.property-card .card-body,.article-card .card-body{display:flex;flex:1;flex-direction:column}
+.property-card .bedroom-note{margin-top:auto}
+.article-card .text-link{margin-top:auto;padding-top:2px;align-self:flex-start}
+.tool-preview .icon-tile{margin-top:8px}
+.tool-preview .soon-badge{top:12px;right:12px}
+.form-integration-note{display:flex;gap:10px;background:#edf6fb;border:1px solid #d5e9f3;border-radius:14px;padding:13px;margin-bottom:22px}
+.form-integration-note>svg{flex-shrink:0;margin-top:2px}
+.form-integration-note strong{display:block;font-size:12px;margin-bottom:3px}
+.form-integration-note p{font-size:11px;line-height:1.65;margin:0}
+.form-integration-note a{text-decoration:underline;text-underline-offset:3px;color:var(--blue);font-weight:600}
+.socials a{border-radius:15px;width:36px;height:36px;background:#ffffff15;color:#d8e2f0;display:grid;place-items:center}
+.contact-option:hover strong{text-decoration:underline;text-underline-offset:3px}
+.filter-group button{transition:background-color 180ms ease,color 180ms ease,box-shadow 180ms ease}
+.filter-group button:focus-visible{outline-offset:2px}
+.property-card:focus-within,.article-card:focus-within{border-color:#a2bae8;box-shadow:0 12px 26px #0036a315}
+@media(hover:hover) and (pointer:fine){
+ .property-card:hover,.article-card:hover{transform:translateY(-6px);border-color:#a2bae8;box-shadow:0 16px 32px #0036a318}
+ .feature:not(.coming-soon):hover{transform:translateY(-4px);box-shadow:0 12px 24px #0036a312}
+ .benefit:hover{background:#ffffff22;border-color:#ffffff50;box-shadow:0 12px 24px #001d5826}
+ .feature:hover .icon-tile{transform:translateY(-2px) rotate(-4deg)}
+ .hero-image:hover{transform:translateY(-4px);box-shadow:0 25px 45px #0036a323}
+ .brand:hover .brand-icon{transform:rotate(-10deg)}
+ .contact-option:hover{transform:translateY(-2px);border-color:#b8c9e9;box-shadow:0 8px 18px #0036a311}
+ .styling-cta:hover{transform:translateY(-4px);box-shadow:0 12px 24px #001d5826}
+ .button:hover{transform:translateY(-2px);box-shadow:0 7px 16px #0036a320}
+ .button:hover svg:last-child,.text-link:hover svg{transform:translateX(3px)}
+ .header-inner nav a:hover{text-decoration:none}
+ .header-inner nav a:hover::after{transform:scaleX(1)}
+ .filter-group button:not([aria-pressed=true]):hover{background:#e7f2fb}
+ .socials a:hover,.socials button:hover{transform:translateY(-3px);background:#ffffff28}
+}
+.button:active,.menu-button:active{transform:translateY(0) scale(.98)}
+@keyframes welcome-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dialog-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(prefers-reduced-motion:no-preference){
+ .hero-copy{animation:welcome-in 500ms ease-out both}
+ .hero-image{animation:welcome-in 600ms ease-out 80ms both}
+ dialog[open]{animation:dialog-in 180ms ease-out}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+ .card:hover,.hero-image:hover,.icon-tile,.button:hover,.brand-icon,.socials a:hover,.socials button:hover{transform:none!important}
+}
