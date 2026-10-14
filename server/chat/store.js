@@ -32,6 +32,10 @@ export async function finishSession(db, id, lease, state, event, response, now) 
 }
 export const releaseSession = (db,id,lease) => db.prepare('UPDATE chat_sessions SET lease=NULL,lease_until=0 WHERE id=? AND lease=?').bind(id,lease).run();
 export const markDelivered = (db,id,event) => db.prepare('UPDATE chat_events SET delivered=1 WHERE session_id=? AND event_id=?').bind(id,event).run();
+export async function sessionPaused(db,id) {
+  const row = await db.prepare('SELECT state FROM chat_sessions WHERE id=?').bind(id).first();
+  return !!row && JSON.parse(row.state).paused===true;
+}
 export async function purgeExpired(db, now = Date.now()) {
   await db.batch([
     db.prepare('DELETE FROM chat_events WHERE expires_at<=?').bind(now),

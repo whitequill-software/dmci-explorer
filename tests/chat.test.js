@@ -169,3 +169,11 @@ test('queue retries reuse response, acknowledged events do not resend, and human
   await consumeMessage({body:{...body,eventId:'echo',action:'echo'},ack:()=>{}},env,never,now+1);
   await consumeMessage({body:{...body,eventId:'after-echo'},ack:()=>{}},env,never,now+2);
 });
+
+test('a cached reply awaiting delivery is suppressed if a human took over during retry backoff',async()=>{
+  const env=config();const body={psid:'789',eventId:'pending-reply',action:'message',text:'Hi',timestamp:now};
+  const item={body,ack:()=>{}};
+  await assert.rejects(consumeMessage(item,env,async()=>{throw new TypeError('Delivery failed')},now));
+  await consumeMessage({body:{...body,eventId:'human-echo',action:'echo'},ack:()=>{}},env,never,now+1);
+  await consumeMessage(item,env,never,now+2);
+});

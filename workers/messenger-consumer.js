@@ -1,6 +1,6 @@
 import {chatReady,runTurn} from '../server/chat/engine.js';
 import {messengerSessionId,sendMessenger} from '../server/chat/messenger.js';
-import {cachedEvent,markDelivered,purgeExpired} from '../server/chat/store.js';
+import {cachedEvent,markDelivered,purgeExpired,sessionPaused} from '../server/chat/store.js';
 
 export async function consumeMessage(message,env,fetcher=fetch,now=Date.now()) {
   if (!chatReady(env) || env.MESSENGER_CHAT_ENABLED!=='true' || !env.META_PAGE_ACCESS_TOKEN || !env.CHAT_IP_SALT) throw new Error('Messenger consumer is disabled or missing configuration');
@@ -11,7 +11,8 @@ export async function consumeMessage(message,env,fetcher=fetch,now=Date.now()) {
   if (!prior?.delivered) {
     const reply = prior?.response || await runTurn(env,{...event,sessionId,channel:'messenger'},fetcher,now);
     // A human's Page reply pauses the AI silently; don't answer the human's own message.
-    if (event.action!=='echo' && !reply.silent) await sendMessenger(env,event.psid,reply,fetcher);
+    const supersededByHuman = !reply.paused && await sessionPaused(env.CHAT_DB,sessionId);
+    if (event.action!=='echo' && !reply.silent && !supersededByHuman) await sendMessenger(env,event.psid,reply,fetcher);
     await markDelivered(env.CHAT_DB,sessionId,event.eventId);
   }
   message.ack();
