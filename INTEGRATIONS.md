@@ -1,4 +1,12 @@
-# Future integrations
+# Integrations
+
+## Inquiry → HubSpot (implemented, disabled until configured)
+
+The React inquiry form now submits same-origin JSON to `functions/api/inquiries.js` at `/api/inquiries`. The server validates every field, requires explicit versioned consent and server-verified Turnstile, and creates or updates HubSpot contacts using the September 2026 Contacts API. Only a confirmed CRM write produces success; errors preserve the draft. Authentication is stored in Cloudflare secrets, never frontend variables.
+
+See [HUBSPOT_SETUP.md](./HUBSPOT_SETUP.md) for exact test-account setup, required contact properties, Preview secrets/variables, approval gate, testing and operational limitations. Inquiry consent does not authorize marketing subscriptions. Owner approval of final consent, privacy terms, controller contact and retention is still required before enabling collection. No production deployment is included.
+
+## Remaining integrations
 
 The homepage stays a static React application on Cloudflare Pages. Add server features only when an approved service is ready.
 
@@ -7,7 +15,7 @@ The homepage stays a static React application on Cloudflare Pages. Add server fe
 - `src/components.jsx`: reusable header, brand, icon, image placeholder, property card and journal card.
 - `src/data.js`: supplied projects, article previews, inventory filtering and browser validation. `location: null` means unknown, never an inferred location.
 - `src/config.js`: public Facebook and Messenger destinations only. `.env.example` documents overrides. The Facebook page was supplied by the owner; the Messenger URL uses its page username. Account-side Messenger settings must be checked before public launch.
-- `src/main.jsx`: page composition, inquiry draft state and dialogs. No API calls or persistent personal data.
+- `src/main.jsx`: page composition, inquiry draft state, same-origin submission and dialogs. No persistent browser personal data.
 - `src/style.css` and `src/motion.css`: visual system, responsive layout and reduced-motion-aware animations.
 
 ## Server boundary
@@ -18,4 +26,4 @@ Keep separate server adapters for Google Sheets/HubSpot, Gemini, lead qualificat
 
 Messenger currently opens the owner's chat channel. An AI assistant belongs in approved Meta webhook/server configuration; no Meta access token belongs in this frontend. Site-visit scheduling needs a confirmed scheduling provider and availability source. Floor plans, comparisons, 3D views and computations need approved project data/assets before becoming live tools. Future project pages can consume the same project records/cards, with stable identifiers and a router added when needed.
 
-No future service is currently enabled or simulated.
+Other future services remain disconnected; no scheduling or AI delivery is simulated.
