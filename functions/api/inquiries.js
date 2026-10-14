@@ -36,7 +36,7 @@ async function readBody(request) {
 export function validatePayload(body) {
   if (!body || Array.isArray(body) || typeof body !== 'object') return {payload: 'Invalid inquiry.'};
   const errors = {};
-  for (const [key, max] of Object.entries({name:120, phone:40, email:254, project:100, bedroom:30, message:3000, website:200, turnstileToken:2048})) {
+  for (const [key, max] of Object.entries({name:120, phone:40, email:254, project:100, bedroom:30, message:3000, floor:60, budget:200, website:200, turnstileToken:2048})) {
     if (typeof body[key] !== 'string' || body[key].length > max || /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(body[key])) errors[key] = 'Invalid or oversized field.';
   }
   if (Object.keys(errors).length) return errors;
@@ -45,6 +45,7 @@ export function validatePayload(body) {
   if (body.consentVersion !== CONSENT_VERSION) errors.consent = 'Consent text has changed. Reload this page and review it.';
   if (!['Not sure yet', ...properties.map(p => p.name)].includes(body.project)) errors.project = 'Choose a listed project.';
   if (!['', '2BR', '3BR', 'Not sure yet'].includes(body.bedroom)) errors.bedroom = 'Choose a listed bedroom preference.';
+  if (!['', 'Low floor', 'High floor', 'No preference'].includes(body.floor)) errors.floor = 'Choose a listed floor preference.';
   if (!body.turnstileToken.trim()) errors.turnstileToken = 'Complete the security check.';
   return errors;
 }
@@ -65,7 +66,7 @@ async function lookup(env, fetcher, value, property) {
   catch (error) { if (error.status === 404) return null; throw error; }
 }
 
-export async function saveContact(env, fetcher, body) {
+export async function saveContact(env, fetcher, body, options = {}) {
   const email = body.email.trim().toLowerCase();
   const phone = normalizePhone(body.phone);
   // Email remains the primary identity. Never merge two people merely sharing a telephone.
@@ -85,9 +86,11 @@ export async function saveContact(env, fetcher, body) {
     firstname, ...(last.length ? {lastname:last.join(' ')} : {}), phone,
     ...(email ? {email} : {dmci_phone_identity:phone}),
     dmci_project:body.project, dmci_bedroom:body.bedroom, dmci_message:body.message.trim(),
-    dmci_consent:'true', dmci_consent_version:CONSENT_VERSION, dmci_consent_text:CONSENT_TEXT,
-    dmci_consent_at:new Date().toISOString(), dmci_source:'DMCI Explorer website',
+    ...(body.floor ? {dmci_floor:body.floor} : {}), ...(body.budget?.trim() ? {dmci_budget:body.budget.trim()} : {}),
+    dmci_consent:'true', dmci_consent_version:options.consentVersion || CONSENT_VERSION, dmci_consent_text:options.consentText || CONSENT_TEXT,
+    dmci_consent_at:options.consentAt || new Date().toISOString(), dmci_source:options.source || 'DMCI Explorer website',
   };
+  if (options.onlyKnown) for (const key of Object.keys(values)) if (values[key]==='') delete values[key];
   const patch = id => hubspot(env, fetcher, `/${encodeURIComponent(id)}`, 'PATCH', {properties:values});
   let result;
   if (existing) {
@@ -104,6 +107,7 @@ export async function saveContact(env, fetcher, body) {
     }
   }
   if (!result.id || result.archived === true) throw new ServiceError(502);
+  return result.id;
 }
 
 export async function handleInquiry(request, env, fetcher = fetch) {
@@ -122,7 +126,7 @@ export async function handleInquiry(request, env, fetcher = fetch) {
   try {
     const body = await readBody(request);
     if (body && !Array.isArray(body) && typeof body === 'object') {
-      for (const field of ['email', 'bedroom', 'message', 'website']) {
+      for (const field of ['email', 'bedroom', 'message', 'floor', 'budget', 'website']) {
         if (body[field] === undefined) body[field] = '';
       }
     }

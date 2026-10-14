@@ -13,6 +13,8 @@ In **Settings → Properties**, choose **Contact properties → Create property*
 | `dmci_phone_identity` | Single-line text; **require unique values** | Concurrent phone-only submission deduplication. This must be a unique property, not merely ordinary text. |
 | `dmci_project` | Single-line text | Selected project name (existing form identifier) |
 | `dmci_bedroom` | Single-line text | Bedroom preference |
+| `dmci_floor` | Single-line text | Low floor, High floor, or No preference |
+| `dmci_budget` | Single-line text | Client-stated amount/range, currency and total-price/monthly basis |
 | `dmci_message` | Multi-line text | Latest inquiry message |
 | `dmci_consent` | Single checkbox (boolean) | Explicit inquiry processing consent |
 | `dmci_consent_version` | Single-line text | Exact version of displayed consent |
@@ -21,6 +23,8 @@ In **Settings → Properties**, choose **Contact properties → Create property*
 | `dmci_source` | Single-line text | `DMCI Explorer website` |
 
 Standard `firstname`, `lastname`, `phone`, and optional `email` are also written. Do not configure automatic marketing subscriptions based on `dmci_consent`: it covers inquiry handling only. Existing marketing preferences and lifecycle stage are untouched.
+
+The ten DMCI fields other than `dmci_phone_identity` have now been created in HubSpot account 247694509 through the connected plugin, with the user's approval. The message and consent-text fields were created as string/text properties; multiline display is optional. The plugin cannot provision the unique-values setting: `dmci_phone_identity` still needs separate creation with uniqueness enabled. See [CHAT_SETUP.md](./CHAT_SETUP.md) for the new OpenAI website/Messenger assistant. An MCP connection in this chat does not grant the deployed server a HubSpot token.
 
 ## 2. Configure Cloudflare Pages Preview only
 

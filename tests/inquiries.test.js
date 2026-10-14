@@ -110,3 +110,17 @@ test('browser submits same-origin JSON and treats non-confirmation as failure', 
     await assert.rejects(sendInquiry(valid,'token',async()=>result));
   }
 });
+
+test('optional floor and budget are validated and mapped without clearing omitted preferences', async () => {
+  const first=mockSequence([verified,[{},404],[{id:'123'}]]);
+  assert.equal((await handleInquiry(request({...valid,floor:'High floor',budget:'PHP 6–8 million total'}),env,first.fetcher)).status,200);
+  assert.equal(first.calls.at(-1).data.properties.dmci_floor,'High floor');
+  assert.equal(first.calls.at(-1).data.properties.dmci_budget,'PHP 6–8 million total');
+  const blank=mockSequence([verified,[{id:'123'}],[{id:'123'}]]);
+  assert.equal((await handleInquiry(request(valid),env,blank.fetcher)).status,200);
+  assert.equal('dmci_floor' in blank.calls.at(-1).data.properties,false);
+  assert.equal('dmci_budget' in blank.calls.at(-1).data.properties,false);
+  for(const patch of [{floor:'Penthouse'},{budget:'x'.repeat(201)},{budget:12345}]) {
+    assert.equal((await handleInquiry(request({...valid,...patch}),env,async()=>assert.fail())).status,400);
+  }
+});

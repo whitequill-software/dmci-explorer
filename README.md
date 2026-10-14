@@ -4,7 +4,7 @@ React, Vite and Tailwind CSS recreation of the eight screenshots in `dmci explor
 
 ## Run
 
-Node.js 22.12+ (Node 24 recommended).
+Node.js 24 (required for the SQLite-backed chat tests).
 
 ```sh
 npm ci
@@ -27,6 +27,7 @@ All assets and fonts are local. Hash navigation and article preview routes work 
 - Location and bedroom filter controls. The five owner-requested projects are shown. Bedroom selections show an explicit unverified-inventory state because no bedroom inventory was supplied.
 - Project detail dialogs, inquiry preselection, journal index, deep-linked article previews, keyboard-accessible dialogs and native focus trapping.
 - Secure inquiry submission through `/api/inquiries` to HubSpot CRM, with server validation, versioned consent, Turnstile, contact matching and accurate delivery status. Disabled until secrets and approved consent are configured. See [HUBSPOT_SETUP.md](./HUBSPOT_SETUP.md).
+- Optional floor/budget form fields and a disabled-by-default OpenAI inquiry assistant for website chat and Messenger. Clients review extracted details before a CRM save. See [CHAT_SETUP.md](./CHAT_SETUP.md) for Preview configuration and remaining Meta account setup. This source change does not deploy or enable either channel.
 
 ## Required before public launch
 

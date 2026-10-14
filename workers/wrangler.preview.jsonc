@@ -1,0 +1,21 @@
+{
+  // Preview-only worker. No production configuration or domain routes.
+  "name": "dmci-messenger-preview",
+  "main": "messenger-consumer.js",
+  "compatibility_date": "2026-10-15",
+  "workers_dev": false,
+  "vars": {
+    "CHAT_ENABLED": "false",
+    "MESSENGER_CHAT_ENABLED": "false",
+    "INQUIRIES_ENABLED": "false",
+    "APPROVED_CHAT_CONSENT_VERSION": "",
+    "OPENAI_CHAT_MODEL": "gpt-5.4-mini",
+    "CHAT_DAILY_AI_CALL_LIMIT": "100",
+    "META_PAGE_ID": "",
+    "META_APP_ID": "",
+    "META_GRAPH_VERSION": ""
+  },
+  "d1_databases": [{"binding":"CHAT_DB","database_name":"dmci-chat-preview","database_id":"REPLACE_WITH_PREVIEW_DATABASE_ID","migrations_dir":"../migrations"}],
+  "queues": {"consumers":[{"queue":"dmci-chat-preview","max_batch_size":1,"max_concurrency":1,"max_retries":3,"dead_letter_queue":"dmci-chat-preview-failed"}]},
+  "triggers": {"crons":["0 * * * *"]}
+}
