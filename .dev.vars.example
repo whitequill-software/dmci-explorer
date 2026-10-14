@@ -1,0 +1,5 @@
+# Copy to .dev.vars for local Pages development. Never commit real tokens.
+HUBSPOT_ACCESS_TOKEN=
+TURNSTILE_SECRET_KEY=
+INQUIRIES_ENABLED=false
+APPROVED_CONSENT_VERSION=

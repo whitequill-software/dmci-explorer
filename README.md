@@ -4,7 +4,7 @@ React, Vite and Tailwind CSS recreation of the eight screenshots in `dmci explor
 
 ## Run
 
-Node.js 20.19+ or 22.12+.
+Node.js 22.12+ (Node 24 recommended).
 
 ```sh
 npm ci
@@ -26,7 +26,7 @@ All assets and fonts are local. Hash navigation and article preview routes work 
 - Responsive eight-section homepage, original supplied hero artwork and explorer mascot, sticky navigation and mobile menu.
 - Location and bedroom filter controls. The five owner-requested projects are shown. Bedroom selections show an explicit unverified-inventory state because no bedroom inventory was supplied.
 - Project detail dialogs, inquiry preselection, journal index, deep-linked article previews, keyboard-accessible dialogs and native focus trapping.
-- Inquiry validation (name, 10–15-digit telephone, optional email format, consent). **No data is transmitted or persisted. The button says Validate Inquiry.** Valid input produces a clear “NOT sent or saved” status.
+- Secure inquiry submission through `/api/inquiries` to HubSpot CRM, with server validation, versioned consent, Turnstile, contact matching and accurate delivery status. Disabled until secrets and approved consent are configured. See [HUBSPOT_SETUP.md](./HUBSPOT_SETUP.md).
 
 ## Required before public launch
 
@@ -35,13 +35,13 @@ All assets and fonts are local. Hash navigation and article preview routes work 
 - Confirm brand usage permission, independent-marketer affiliation, interior styling eligibility and service terms. Reference claims are not independently verified.
 - Provide verified phone, email, business address and approved privacy/service policies. The owner supplied https://www.facebook.com/dmciexplorer; Facebook links use this page and chat links use https://m.me/dmciexplorer. Confirm Messenger is enabled on the page. Placeholder phone/email from the deck are not actionable contacts.
 - Connect inquiry delivery using a Cloudflare Pages Function/Worker or another approved server. Validate server-side, verify consent, apply rate limiting/spam protection, configure secrets, a real recipient or CRM, retention controls and error handling. Only after successful delivery/storage should the UI offer Send Inquiry and show a receipt. Do not expose API secrets in client code or enable a simulated success message.
-- Viewing scheduling, CRM, email notifications, floor-plan gallery, layout viewer, comparison engine and 3D tours require integrations/content. These are explicitly marked as previews or pending.
+- HubSpot delivery is implemented. Configure the required CRM properties, Preview secrets, Turnstile and approval variables following [HUBSPOT_SETUP.md](./HUBSPOT_SETUP.md). Viewing scheduling, email notifications, floor-plan gallery, layout viewer, comparison engine and 3D tours still require integrations/content.
 
 No subscriptions purchased. No user live domain changed. Source repository: https://github.com/whitequill-software/dmci-explorer. Cloudflare preview: https://dmci-explorer.pages.dev/. The existing Cloudflare project uses Direct Upload; GitHub pushes do not trigger deployment.
 
 ## Instant preview
 
-Open `DMCI-Explorer-Preview.html` supplied beside the source ZIP in Chrome or Edge. Everything needed to render it is embedded; only Facebook/Messenger navigation needs an internet connection. If an older preview is already open, close it and open the updated file. The preview includes hover effects; system reduced-motion settings intentionally suppress movement.
+Open `DMCI-Explorer-Preview.html` supplied beside the source ZIP in Chrome or Edge for a visual preview. Inquiry submission and Turnstile require HTTP hosting with Pages Functions; a standalone HTML file cannot run the backend. If an older preview is already open, close it and open the updated file. The preview includes hover effects; system reduced-motion settings intentionally suppress movement.
 
 To regenerate the single-file preview after changing the source, run `npm run build`, then `python scripts/export-preview.py`.
 
