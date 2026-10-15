@@ -4,7 +4,7 @@ No production deployment, DNS change, CRM configuration change, or real CRM writ
 
 ## 1. Prepare HubSpot
 
-As a HubSpot super admin, open **Development → Legacy apps → Create legacy app → Private**. Name it `DMCI Explorer inquiries`. On **Scopes**, add only `crm.objects.contacts.read` and `crm.objects.contacts.write`. Create the app, then open **Auth → Show token → Copy**. This private app token uses Bearer authentication with the current September 2026 Contacts API; the integration does not use retired API keys or Contacts v1. Do not paste the token into GitHub, this document, chat, browser code, a `VITE_` variable, or a command argument.
+As a HubSpot super admin or user with Developer tools access, open **Development → Keys → Service keys → Create service key**. On the Legacy Apps unavailable screen, the **Create a service key** button opens this flow directly. Name it `DMCI Explorer inquiries`. Click **Add new scope**, select only `crm.objects.contacts.read` and `crm.objects.contacts.write`, then **Update → Create** and confirm. Open the key's details and choose **Show → Copy**. This service key uses Bearer authentication with the current September 2026 Contacts API; store it in the existing `HUBSPOT_ACCESS_TOKEN` Cloudflare secret. No backend code change is needed. Do not paste it into GitHub, this document, chat, browser code, a `VITE_` variable, or a command argument. Legacy private app tokens remain an alternative only for accounts that still offer them; this account's screenshot confirms that legacy apps are unavailable.
 
 In **Settings → Properties**, choose **Contact properties → Create property**. Create the following with these exact internal names. A group called `DMCI Explorer` is convenient. The integration intentionally does not require schema-write permissions or create properties at request time.
 
@@ -30,7 +30,7 @@ The ten DMCI fields other than `dmci_phone_identity` have now been created in Hu
 
 1. In Cloudflare, open **Turnstile → Add widget**. Use Managed mode and add the exact preview hostname you will test. Copy its public site key and secret key. Use a separate widget for public production later. Domain management and DNS changes are unnecessary.
 2. Open **Workers & Pages → the existing DMCI Explorer Pages project → Settings → Variables and Secrets**, and select **Preview**. Do not choose Production.
-3. Add `HUBSPOT_ACCESS_TOKEN` with type **Secret**; paste the private app token from step 1. Add `TURNSTILE_SECRET_KEY` with type **Secret**; paste the widget secret. Save. Neither value belongs in build-time browser configuration.
+3. Add `HUBSPOT_ACCESS_TOKEN` with type **Secret**; paste the service key from step 1. Add `TURNSTILE_SECRET_KEY` with type **Secret**; paste the widget secret. Save. Neither value belongs in build-time browser configuration.
 4. Add the public variable `VITE_TURNSTILE_SITE_KEY` with the matching widget's site key. It is expected to appear in the browser bundle.
 5. After owner approval of the policy and consent, add `APPROVED_CONSENT_VERSION=2026-10-15` and `INQUIRIES_ENABLED=true` as Preview variables. Until then, leave `INQUIRIES_ENABLED=false`; the endpoint returns HTTP 503 and writes nothing.
 6. This repository documents the existing `dmci-explorer` Pages project as **Direct Upload**, so pushing this PR does not install the endpoint. `functions/api/inquiries.js` must remain in the repository root's `functions` tree (beside `src`, not inside `dist`). A static dashboard drag-and-drop upload of `dist` alone does not install Functions. Do not try to switch the existing project to Git integration or move its domains.
@@ -85,11 +85,11 @@ Open `http://localhost:8788/#contact`. `npm run dev` alone serves Vite and does 
 - Turnstile is mandatory, verified server-side with the exact request hostname and `inquiry` action. Tokens expire and are single-use. A honeypot, 16 KiB streamed body limit, field bounds, strict same-origin JSON checks and no CORS allowance add protection. Add a Cloudflare WAF rate-limit rule for POST `/api/inquiries` if supported by the account; tune its IP threshold for shared networks. There is no misleading in-memory rate limiter or claim that Turnstile prevents every abuse attempt.
 - Each upstream request has a 7-second timeout; the browser waits up to 30 seconds. A timeout may happen after HubSpot accepted the write, so the message says delivery could not be confirmed. Retrying usually updates the same contact. No automatic CRM write retries, local PII persistence, request-body logs or upstream error bodies are used.
 - `405` means wrong method; `403` wrong/missing Origin; `415` wrong content type; `400` invalid inquiry/security check; `413` oversized body; `503` disabled/missing configuration or HubSpot busy (`Retry-After: 60`); `502` unconfirmed upstream delivery. Responses are JSON with `Cache-Control: no-store`. Inspect redacted status codes in Pages/HubSpot logs; never enable request-body/token logging.
-- Rotate the HubSpot token in the private app's Auth tab, replace the Cloudflare **Preview Secret**, and rebuild the preview. To stop collection, set `INQUIRIES_ENABLED=false` and rebuild. Production setup/rollout requires separate authorization.
+- Rotate the HubSpot service key in **Development → Keys → Service keys → your key → Rotate**, replace the Cloudflare **Preview Secret**, and rebuild the preview. For an existing legacy private app token, use its Auth tab instead. To stop collection, set `INQUIRIES_ENABLED=false` and rebuild. Production setup/rollout requires separate authorization.
 
 ## Official references (checked October 15, 2026)
 
 - [Current Contacts API](https://developers.hubspot.com/docs/api-reference/latest/crm/objects/contacts/guide)
-- [Private app token and scope setup](https://developers.hubspot.com/docs/apps/legacy-apps/private-apps/overview)
+- [Service key creation, scopes and Bearer authentication](https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/account-service-keys)
 - [Pages bindings and secrets](https://developers.cloudflare.com/pages/functions/bindings/)
 - [Turnstile server-side validation](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/)

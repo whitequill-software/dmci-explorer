@@ -23,9 +23,9 @@ The server generates all replies from reviewed templates. OpenAI extracts facts 
 
 ## First owner action: prepare the HubSpot server token
 
-1. Open HubSpot **Development → Legacy apps → Create legacy app → Private** (or use the dedicated app already created for this integration).
-2. Give it only `crm.objects.contacts.read` and `crm.objects.contacts.write` scopes. Schema writes are not required at runtime.
-3. In the app's **Auth** tab, copy its token directly into Cloudflare **Workers & Pages → dmci-explorer → Settings → Variables and Secrets → Preview**.
+1. Open HubSpot **Development → Keys → Service keys → Create service key**, or click **Create a service key** on the screen that says legacy apps are unavailable. Name it `DMCI Explorer inquiries`. This account does not offer legacy apps.
+2. Click **Add new scope**, select only `crm.objects.contacts.read` and `crm.objects.contacts.write`, then **Update → Create** and confirm. Schema writes are not required at runtime.
+3. Open the service key's details, choose **Show → Copy**, and paste the key directly into Cloudflare **Workers & Pages → dmci-explorer → Settings → Variables and Secrets → Preview**.
 4. Save it as encrypted Secret `HUBSPOT_ACCESS_TOKEN`. Do not send the token in chat. The HubSpot plugin's login is separate from this runtime token.
 
 ## Website Preview resources and configuration
@@ -39,7 +39,7 @@ Do not change Production or DNS. Prepare these resources only after reviewing ap
 | Secret | Value source |
 | --- | --- |
 | `OPENAI_API_KEY` | Already reported saved by owner; ensure the key can create Responses and access the configured model |
-| `HUBSPOT_ACCESS_TOKEN` | Dedicated HubSpot private app token above |
+| `HUBSPOT_ACCESS_TOKEN` | Dedicated HubSpot service key above; the existing Bearer-auth code accepts it |
 | `TURNSTILE_SECRET_KEY` | Real Turnstile widget secret; allow the exact preview hostname |
 | `CHAT_IP_SALT` | Cryptographically random value, at least 32 random bytes; save in a password manager for configuring the consumer later |
 
@@ -148,6 +148,8 @@ npx wrangler deploy --dry-run --config workers/wrangler.preview.jsonc --outdir .
 The Worker command above is **dry-run only**. Automated tests use fake keys, in-memory SQLite and mocked OpenAI/HubSpot/Meta responses. They create no cloud resources and send no live messages.
 
 ## Primary references
+
+- [HubSpot service key creation and authentication](https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/account-service-keys)
 
 - [OpenAI Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs)
 - [OpenAI GPT-5.4 Mini](https://developers.openai.com/api/docs/models/gpt-5.4-mini)
