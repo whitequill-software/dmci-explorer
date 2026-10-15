@@ -14,7 +14,7 @@ function loadTurnstile() {
   return loading;
 }
 
-export function Turnstile({onToken, resetKey, siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY}) {
+export function Turnstile({onToken, resetKey, action = 'inquiry', siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY}) {
   const container = useRef(null);
   const [failed, setFailed] = useState(false);
   useEffect(() => {
@@ -24,13 +24,13 @@ export function Turnstile({onToken, resetKey, siteKey = import.meta.env.VITE_TUR
     if (siteKey) loadTurnstile().then(api => {
       if (!active) return;
       widget = api.render(container.current, {
-        sitekey:siteKey, action:'inquiry', size:'flexible',
+        sitekey:siteKey, action, size:'flexible',
         callback:token => { if (active) { setFailed(false); onToken(token); } },
         'expired-callback':() => { if (active) onToken(''); },
         'error-callback':() => { if (active) { onToken(''); setFailed(true); } },
       });
     }).catch(() => { if (active) setFailed(true); });
     return () => { active = false; if (widget !== undefined) window.turnstile?.remove(widget); };
-  }, [siteKey, resetKey, onToken]);
+  }, [siteKey, resetKey, onToken, action]);
   return <div className="security-check"><div ref={container}/>{(!siteKey || failed) && <p className="error" role="status">Security check unavailable. Please reload or contact us on Messenger.</p>}</div>;
 }

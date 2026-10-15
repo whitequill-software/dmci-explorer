@@ -16,6 +16,16 @@ function fill(){
   fireEvent.click(screen.getByLabelText(/I consent to DMCI Explorer/));
   fireEvent.click(screen.getByText('Verify security'));
 }
+test('floor and budget use the existing form and submit the stated range verbatim',async()=>{
+  let sent;
+  vi.stubGlobal('fetch',vi.fn(async(url,options)=>{sent=JSON.parse(options.body);return new Response(JSON.stringify({ok:true}))}));
+  render(<App/>);fill();
+  fireEvent.change(screen.getByLabelText('Floor preference (optional)'),{target:{value:'High floor'}});
+  fireEvent.change(screen.getByLabelText(/Budget \(optional\)/),{target:{value:'PHP 6–8 million total'}});
+  fireEvent.click(screen.getByRole('button',{name:'Send Inquiry'}));
+  await screen.findByText(/Thank you. Your inquiry has been received/);
+  expect(sent.floor).toBe('High floor');expect(sent.budget).toBe('PHP 6–8 million total');
+});
 test('loading blocks repeat submission; confirmed success resets the draft and consent',async()=>{
   let resolve;
   const fetcher=vi.fn(()=>new Promise(r=>{resolve=r}));vi.stubGlobal('fetch',fetcher);

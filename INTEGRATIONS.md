@@ -8,6 +8,12 @@ See [HUBSPOT_SETUP.md](./HUBSPOT_SETUP.md) for exact test-account setup, require
 
 ## Remaining integrations
 
+## OpenAI inquiry assistant (implemented, Preview configuration pending)
+
+`/api/chat` and `/api/messenger` share `server/chat/engine.js`. Website messages use same-origin JSON, an HTTP-only session cookie and per-message Turnstile verification. Messenger verifies Meta's raw-body HMAC, queues signed events, and processes them in the separate preview consumer Worker. D1 isolates session context, leases, deduplicated event results and usage quotas. OpenAI Responses API performs structured extraction with evidence; deterministic replies avoid invented pricing, inventory and bookings. Clients review their details before the server writes to HubSpot. Floor and budget are also available in the original inquiry form.
+
+The agent has no generic CRM tool, contact-ID selection or authority to infer consent. Unknown preferences do not clear existing CRM values. Human requests and Page replies pause AI replies. Both channels and CRM delivery are disabled by default. See [CHAT_SETUP.md](./CHAT_SETUP.md) for all remaining Preview resources, secrets, approval requirements, Meta connection steps, retention limits and tests. No agent is deployed or live as part of this change.
+
 The homepage stays a static React application on Cloudflare Pages. Add server features only when an approved service is ready.
 
 ## Current separation
@@ -24,6 +30,6 @@ When connecting leads, put a same-origin `/api/inquiries` Pages Function or Work
 
 Keep separate server adapters for Google Sheets/HubSpot, Gemini, lead qualification, follow-up, scheduling and computation generation. Share a validated inquiry payload: name, phone, optional email, project identifier, bedroom preference, message and explicit consent. Final consent version, lawful processing terms and retention policy require owner approval before enabling collection. Do not add unaudited CRM calls directly in React.
 
-Messenger currently opens the owner's chat channel. An AI assistant belongs in approved Meta webhook/server configuration; no Meta access token belongs in this frontend. Site-visit scheduling needs a confirmed scheduling provider and availability source. Floor plans, comparisons, 3D views and computations need approved project data/assets before becoming live tools. Future project pages can consume the same project records/cards, with stable identifiers and a router added when needed.
+Messenger links open the owner's chat channel. The prepared AI assistant requires the Meta webhook/server configuration in CHAT_SETUP.md; no Meta access token belongs in the frontend. Site-visit scheduling needs a confirmed scheduling provider and availability source. Floor plans, comparisons, 3D views and computations need approved project data/assets before becoming live tools. Future project pages can consume the same project records/cards, with stable identifiers and a router added when needed.
 
-Other future services remain disconnected; no scheduling or AI delivery is simulated.
+Other future services remain disconnected; no scheduling or live AI delivery is simulated.

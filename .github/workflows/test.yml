@@ -18,3 +18,4 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: npx wrangler pages functions build functions --outdir .wrangler/functions-build
+      - run: npx wrangler deploy --dry-run --config workers/wrangler.preview.jsonc --outdir ../.wrangler/messenger-build
